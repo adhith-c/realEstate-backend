@@ -18,9 +18,10 @@ exports.getSaved = async (req, res) => {
     if (saved) {
       res.json({ saved: saved });
     } else {
-      res.sendStatus(400).json({ msg: "nothing" });
+      res.json({ msg: "nothing" });
     }
   } catch (err) {
+    res.json({ err });
     console.log(err);
   }
 };
