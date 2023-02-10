@@ -49,7 +49,7 @@ exports.postAdminLogin = async (req, res) => {
           );
           res.status(200).json({ accessToken: token, id: admin._id });
         } else {
-          res.send("incorrect password");
+          res.json({ error: "incorrect password" });
         }
       } else {
         // res.send("invalid email");
@@ -73,17 +73,19 @@ exports.postAdminLogin = async (req, res) => {
             );
             res.status(200).json({ id: admin._id, accessToken: token });
           } else {
-            res.send("incorrect password");
+            res.json({ error: "incorrect password" });
           }
+        } else {
+          res.json({ error: "invalid email" });
         }
       }
     } catch (err) {
       console.log(err);
-      res.status(500).json({ error: err });
+      res.json({ error: err });
     }
   } else {
     console.log(error);
-    res.json({ error });
+    res.json({ error: error.details[0].message });
   }
 };
 
