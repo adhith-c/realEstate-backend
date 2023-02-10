@@ -290,8 +290,15 @@ exports.getSingleUser = async (req, res) => {
 };
 exports.getAllusers = async (req, res) => {
   try {
-    const users = await User.find({});
-    res.status(200).json({ users });
+    const page = req.query.page || 0;
+    const docsPerPage = 4;
+    console.log("query", req.query);
+    const count = await User.find({}).count();
+    const totalPages = Math.ceil(count / docsPerPage);
+    const users = await User.find({})
+      .skip(page * docsPerPage)
+      .limit(docsPerPage);
+    res.status(200).json({ users, totalPages });
   } catch (err) {
     res.status(500).json({ msg: err });
   }
