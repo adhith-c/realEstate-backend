@@ -33,23 +33,27 @@ exports.postAdminLogin = async (req, res) => {
   if (!error) {
     try {
       const { email, password } = req.body;
-      const admin = await Admin.findOne({ email });
+      const admin = await Admin.findOne({});
       console.log("admin", admin);
       if (admin) {
-        const isValid = comparePassword(password, admin.password);
-        console.log("valid", isValid);
-        if (isValid) {
-          const token = jwt.sign(
-            {
-              id: admin._id,
-              name: admin.name,
-              type: "admin",
-            },
-            process.env.JWT_ADMIN_SECRET_KEY
-          );
-          res.status(200).json({ accessToken: token, id: admin._id });
+        if (admin.email === email) {
+          const isValid = comparePassword(password, admin.password);
+          console.log("valid", isValid);
+          if (isValid) {
+            const token = jwt.sign(
+              {
+                id: admin._id,
+                name: admin.name,
+                type: "admin",
+              },
+              process.env.JWT_ADMIN_SECRET_KEY
+            );
+            res.status(200).json({ accessToken: token, id: admin._id });
+          } else {
+            res.json({ error: "incorrect password" });
+          }
         } else {
-          res.json({ error: "incorrect password" });
+          res.json({ error: "invalid email" });
         }
       } else {
         // res.send("invalid email");
